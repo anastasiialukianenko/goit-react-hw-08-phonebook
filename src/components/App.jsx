@@ -10,11 +10,23 @@ export class App extends Component {
     filter: '',
   }
   
+  componentDidMount() {
+    const saveContactsData = localStorage.getItem('contactsData');
+
+    this.setState({ contacts: saveContactsData ? JSON.parse(saveContactsData) : [] });
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+        localStorage.setItem('contactsData', JSON.stringify(this.state.contacts));
+    }
+  }
+
   handleSubmit = (contact) => {
     const { contacts } = this.state;
     const isDuplicate = contacts.some((existingContact) => existingContact.name === contact.name);
     isDuplicate ? alert(`${contact.name} already exists. Please use a different name.`) : this.setState((prevState) => (
-      {contacts: [contact, ...prevState.contacts],}));
+      { contacts: [contact, ...prevState.contacts], }));
   };
 
   changeFilter = (evt) => {
