@@ -1,39 +1,38 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { nanoid } from "nanoid";
 import PropTypes from 'prop-types';
 import { FormWrap, Input, Button } from "components/Emotion.styled";
 
-export class Form extends Component {
-    state = {
-        name: '',
-        number: '',
-    }
+export function Form({onSubmit}) {
 
-handleChange = evt => {
-    const { name, value } = evt.currentTarget;
-    this.setState({ [name]: value });
-  }; 
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
 
+   const handleNameChange = evt => {
+       setName(evt.target.value);
+    }; 
     
-    handleSubmit = (evt) => {
+     const handleNumberChange = evt => {
+       setNumber(evt.target.value);
+    }; 
+    
+    const handleSubmit = (evt) => {
     evt.preventDefault();
-    const { name, number } = this.state;
-    const contact = { name, number, id: nanoid() };
-    this.props.onSubmit(contact); 
-    this.setState({
-      name: "",
-      number: "",
-    });
+        const contact = { name, number, id: nanoid() };
+        onSubmit(contact); 
+
+        setName("");
+        setNumber("");
   };
 
-    render() {
-        const { name, number } = this.state;
-        return <FormWrap onSubmit={this.handleSubmit}>
+
+    return (
+    <FormWrap onSubmit={handleSubmit}>
 
         <label>
           Name
           <Input
-          onChange={this.handleChange}
+          onChange={handleNameChange}
               type="text"
               value={name}
           name="name"
@@ -46,7 +45,7 @@ handleChange = evt => {
           <label>
             Number
             <Input
-            onChange={this.handleChange}
+            onChange={handleNumberChange}
               type="tel"
               value={number}
             name="number"
@@ -58,8 +57,10 @@ handleChange = evt => {
 
         <Button type="submit">Add contact</Button>
         </FormWrap>
-    }
+)
+
 }
+
 
 Form.propTypes = {
   onSubmit: PropTypes.func.isRequired,
