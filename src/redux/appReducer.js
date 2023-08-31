@@ -13,9 +13,9 @@ const appSlice = createSlice({
   initialState: initialState,
   // Об'єкт редюсерів
   reducers: {
-    // addLocalStorageContacts(state, action) {
-    //   return { ...state, contacts: [...action.payload] };
-    // },
+      addLocalStorageContacts(state, action) {
+           return {...state, contacts: [...action.payload]}
+    },
       addContacts(state, action) {
           state.contacts = [action.payload, ...state.contacts];
         // return {...state, contacts: [action.payload, ...state.contacts]}
@@ -42,4 +42,3 @@ export const selectFilter = state => state.appState.filter;
 
 // Редюсер слайсу
 export const appReducer = appSlice.reducer;
-

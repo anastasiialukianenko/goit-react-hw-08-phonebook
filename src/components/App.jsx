@@ -1,18 +1,31 @@
-import React from "react";
+import React, {useEffect } from "react";
 import { Form } from "./Form/Form"
 import { Filter } from "./Filter/Filter";
 import { ContactList } from "./ContastsList/ContactList";
 import { useDispatch, useSelector } from "react-redux";
-import { addContacts, deleteContacts, filterIsChanged, selectContacts, selectFilter } from '../redux/appReducer';
-import { PersistGate } from "redux-persist/integration/react";
-import { persistor } from '../redux/store';
-
+import { addLocalStorageContacts, addContacts, deleteContacts, filterIsChanged, selectContacts,  selectFilter } from '../redux/appReducer'
 
 export function App() {
   
   const contacts = useSelector(selectContacts);
   const filter = useSelector(selectFilter);
   const dispatch = useDispatch();
+
+
+
+  useEffect(() => {
+    const savedContactsData = localStorage.getItem('contactsData');
+    if (savedContactsData) {
+      const parsedContactData = JSON.parse(savedContactsData);
+      dispatch(addLocalStorageContacts(parsedContactData));
+}
+  }, [dispatch]);
+
+useEffect(() => {
+  if (contacts.length > 0) {
+    localStorage.setItem('contactsData', JSON.stringify(contacts));
+  }
+}, [contacts]);
 
   
   const handleSubmit = (contact) => {
@@ -51,11 +64,3 @@ export function App() {
   )
 
 }
-
-const AppWithPersist = () => (
-  <PersistGate loading={null} persistor={persistor}>
-    <App />
-  </PersistGate>
-);
-
-export default AppWithPersist;
