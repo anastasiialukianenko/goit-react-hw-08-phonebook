@@ -1,28 +1,48 @@
 import React, { useState } from "react";
 import { nanoid } from "nanoid";
-import PropTypes from 'prop-types';
-import { FormWrap, Input, Button } from "components/Emotion.styled";
+import { useDispatch, useSelector } from "react-redux";
 
-export function Form({onSubmit}) {
+import { FormWrap, Input, Button } from "components/Emotion.styled";
+import { addContacts, selectContacts } from "redux/appReducer";
+
+export function Form() {
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
 
     const [name, setName] = useState('');
-    const [number, setNumber] = useState('');
+    const [phone, setPhone] = useState('');
 
    const handleNameChange = evt => {
        setName(evt.target.value);
     }; 
     
      const handleNumberChange = evt => {
-       setNumber(evt.target.value);
+       setPhone(evt.target.value);
     }; 
     
-    const handleSubmit = (evt) => {
-    evt.preventDefault();
-        const contact = { name, number, id: nanoid() };
-        onSubmit(contact); 
+  
+  const checkIsDuplicating = (newContactName) => {
+    return contacts.some((existingContact) => existingContact.name === newContactName);
+  };
 
-        setName("");
-        setNumber("");
+   const handleSubmit = (evt) => {
+    evt.preventDefault();
+
+    const newContactItem = {
+      id: nanoid(),
+      name,
+      phone,
+    };
+
+    if (!checkIsDuplicating(newContactItem.name)) {
+      dispatch(addContacts(newContactItem)); 
+      setName("");
+      setPhone("");
+    } else {
+      alert(`${newContactItem.name} already exists. Please use a different name.`);
+      setName("");
+      setPhone("");
+    }
   };
 
 
@@ -47,7 +67,7 @@ export function Form({onSubmit}) {
             <Input
             onChange={handleNumberChange}
               type="tel"
-              value={number}
+              value={phone}
             name="number"
             pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
@@ -61,7 +81,3 @@ export function Form({onSubmit}) {
 
 }
 
-
-Form.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-}

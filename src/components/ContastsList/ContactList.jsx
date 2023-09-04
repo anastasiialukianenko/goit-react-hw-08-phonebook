@@ -1,23 +1,30 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import { DeleteButton } from "components/Emotion.styled";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteContacts, selectContacts, selectFilterTerm, selectIsLoading } from '../../redux/appReducer';
 
-export const ContactList = ({ filterContacts, isLoading, onDelete}) => {
+
+export const ContactList = () => {
+const contacts = useSelector(selectContacts);
+    const isLoading = useSelector(selectIsLoading);
+     const filter = useSelector(selectFilterTerm);
+    const dispatch = useDispatch();
+    
+const getFilteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact => contact?.name?.toLowerCase().includes(normalizedFilter));
+  };
+    
     return(
         <ul>
+
             {isLoading && <p>Loading data...</p>}
 
-            {filterContacts.length > 0 && !isLoading && filterContacts.map(contact =>
-                <li key={contact.id}>{contact.name}: {contact.number}
-            <DeleteButton onClick={() => onDelete(contact.id)}>Delete</DeleteButton>
+            {getFilteredContacts().length > 0 && !isLoading && getFilteredContacts().map(contact =>
+                <li key={contact.id}>{contact.name}: {contact.phone}
+            <DeleteButton onClick={() => dispatch(deleteContacts(contact.id))}>Delete</DeleteButton>
             </li>)}
 </ul>)
-}
-
-ContactList.propTypes = {
-    filterContacts: PropTypes.arrayOf(PropTypes.object).isRequired,
-    onDelete: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool.isRequired,
 }
 
 

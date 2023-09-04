@@ -1,17 +1,21 @@
 import React from "react";
-import PropTypes from 'prop-types';
+
 import {Input } from "components/Emotion.styled";
+import { useDispatch, useSelector } from "react-redux";
+import { selectFilterTerm, setFilterTerm } from "redux/appReducer";
 
-export const Filter = ({ value, onChange }) => {
+export const Filter = () => {
+  const dispatch = useDispatch();
+  const filter = useSelector(selectFilterTerm);
+
+const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    dispatch(setFilterTerm(newValue));
+};
+  
    return (<label>Find contacts by name
-            <Input type="text" value={value} onChange={onChange} />
+            <Input type="text" value={filter} onChange={handleInputChange} />
           </label>)
-}
+};
 
 
-
-
-Filter.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
-}
