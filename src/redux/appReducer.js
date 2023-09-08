@@ -52,34 +52,32 @@ const appSlice = createSlice({
    },
   extraReducers: (builder) =>
     builder
-      .addCase(requestContacts.pending, (state) => {
-    state.contacts.isLoading = true;
-    state.contacts.error = null;
-      }).addCase(requestContacts.fulfilled, (state, action) => { 
+     .addCase(requestContacts.fulfilled, (state, action) => { 
         state.contacts.isLoading = false;
         state.contacts.items = action.payload;
-      }).addCase(requestContacts.rejected, (state, action) => { 
-        state.contacts.isLoading = false;
-        state.contacts.error = action.payload;
-      })  
-  .addCase(deleteContacts.pending, (state) => {
-    state.contacts.isLoading = true;
-      }).addCase(deleteContacts.fulfilled, (state, action) => { 
+      })
+  .addCase(deleteContacts.fulfilled, (state, action) => { 
         state.contacts.items = state.contacts.items.filter(contact => contact.id !== action.payload.id);
         state.contacts.isLoading = false;
-      }).addCase(deleteContacts.rejected, (state, action) => { 
-        state.contacts.isLoading = false;
-        state.contacts.error = action.payload;
       })
-   .addCase(addContacts.pending, (state) => {
-    state.contacts.isLoading = true;
-      }).addCase(addContacts.fulfilled, (state, action) => { 
+   .addCase(addContacts.fulfilled, (state, action) => { 
         state.contacts.items = [action.payload, ...state.contacts.items]
         state.contacts.isLoading = false;
-      }).addCase(addContacts.rejected, (state, action) => { 
-        state.contacts.isLoading = false;
-        state.contacts.error = action.payload;
       })
+    .addMatcher(
+        action => action.type.endsWith('/pending'),
+        (state) => {
+          state.contacts.isLoading = true;
+          state.contacts.error = null;
+        }
+    )
+   .addMatcher(
+        action => action.type.endsWith('/rejected'),
+        (state, action) => {
+           state.contacts.isLoading = false;
+        state.contacts.error = action.payload;
+        }
+  )
 });
 
 // Генератори екшенів

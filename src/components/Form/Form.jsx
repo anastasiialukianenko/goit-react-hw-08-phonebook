@@ -2,22 +2,24 @@ import React, { useState } from "react";
 import { nanoid } from "nanoid";
 import { useDispatch, useSelector } from "react-redux";
 
-import { FormWrap, Input, Button } from "components/Emotion.styled";
+import { FormLabel, UserFormWrap, ContactsForm } from "components/Emotion.styled";
 import { addContacts, selectContacts } from "redux/appReducer";
+import { InputGroup, Input, InputLeftElement, ButtonGroup, Button } from "@chakra-ui/react";
+import { EmailIcon } from "@chakra-ui/icons";
 
 export function Form() {
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
 
     const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
+    const [number, setNumber] = useState('');
 
    const handleNameChange = evt => {
        setName(evt.target.value);
     }; 
     
      const handleNumberChange = evt => {
-       setPhone(evt.target.value);
+       setNumber(evt.target.value);
     }; 
     
   
@@ -31,27 +33,32 @@ export function Form() {
     const newContactItem = {
       id: nanoid(),
       name,
-      phone,
+      number,
     };
 
     if (!checkIsDuplicating(newContactItem.name)) {
       dispatch(addContacts(newContactItem)); 
       setName("");
-      setPhone("");
+      setNumber("");
     } else {
       alert(`${newContactItem.name} already exists. Please use a different name.`);
       setName("");
-      setPhone("");
+      setNumber("");
     }
   };
 
 
-    return (
-    <FormWrap onSubmit={handleSubmit}>
+  return (
+      <UserFormWrap>
+    <ContactsForm onSubmit={handleSubmit}>
 
         <label>
-          Name
-          <Input
+          <FormLabel>Name:</FormLabel>
+          <InputGroup>
+          <InputLeftElement pointerEvents='none'>
+          <EmailIcon color='gray.300' />
+          </InputLeftElement>
+            <Input
           onChange={handleNameChange}
               type="text"
               value={name}
@@ -60,23 +67,33 @@ export function Form() {
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
         />
+          </InputGroup>
+          
           </label>
           
-          <label>
-            Number
+        <label>
+          <FormLabel>Number:</FormLabel>
+          <InputGroup>
+          <InputLeftElement pointerEvents='none'>
+          <EmailIcon color='gray.300' />
+          </InputLeftElement>
             <Input
-            onChange={handleNumberChange}
+          onChange={handleNumberChange}
               type="tel"
-              value={phone}
+              value={number}
             name="number"
             pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
-            />
+        />
+          </InputGroup>
           </label>
-
-        <Button type="submit">Add contact</Button>
-        </FormWrap>
+        
+        <ButtonGroup variant='outline' spacing='6'>
+          <Button type="submit" colorScheme='blue' >Add contact</Button>
+        </ButtonGroup>
+      </ContactsForm>
+      </UserFormWrap>
 )
 
 }

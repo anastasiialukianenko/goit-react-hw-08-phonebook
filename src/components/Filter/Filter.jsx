@@ -1,8 +1,11 @@
 import React from "react";
 
-import {Input } from "components/Emotion.styled";
 import { useDispatch, useSelector } from "react-redux";
 import { selectFilterTerm, setFilterTerm } from "redux/appReducer";
+import { InputGroup, Input, InputLeftElement } from "@chakra-ui/react";
+import { Search2Icon } from "@chakra-ui/icons";
+import { SubHeading } from "components/Emotion.styled";
+;
 
 export const Filter = () => {
   const dispatch = useDispatch();
@@ -13,9 +16,17 @@ const handleInputChange = (e) => {
     dispatch(setFilterTerm(newValue));
 };
   
-   return (<label>Find contacts by name
-            <Input type="text" value={filter} onChange={handleInputChange} />
-          </label>)
+  return (
+    <label>
+          <SubHeading >Find contacts by name</SubHeading> 
+          <InputGroup>
+          <InputLeftElement pointerEvents='none'>
+          <Search2Icon color='gray.300' />
+          </InputLeftElement>
+            <Input variant='outline' width='350px' type="text" value={filter} onChange={handleInputChange} />
+          </InputGroup>
+        </label>
+  )
 };
 
 
